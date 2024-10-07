@@ -3,6 +3,7 @@ from typing import Any, List
 
 # 3rd party dependencies
 import numpy as np
+from dotenv import dotenv_values
 
 # project dependencies
 from deepface.models.Detector import Detector, FacialAreaRegion
@@ -21,6 +22,7 @@ WEIGHT_URL = "https://drive.google.com/uc?id=1qcr9DbgsX3ryrz2uU8w4Xm3cOrRywXqb"
 class YoloClient(Detector):
     def __init__(self):
         self.model = self.build_model()
+        self.config = dotenv_values(".env")
 
     def build_model(self) -> Any:
         """
@@ -38,9 +40,12 @@ class YoloClient(Detector):
                 "Please install using 'pip install ultralytics'"
             ) from e
 
-        weight_file = weight_utils.download_weights_if_necessary(
-            file_name="yolov8n-face.pt", source_url=WEIGHT_URL
-        )
+        if ("CUSTOM_YOLO_WEIGHTS" in self.config and self.config["YOLO_CUSTOM_WEIGHTS"]):
+            weight_file =  self.config["YOLO_CUSTOM_WEIGHTS"]
+        else:
+            weight_file = weight_utils.download_weights_if_necessary(
+                file_name="yolov8n-face.pt", source_url=WEIGHT_URL
+            )
 
         # Return face_detector
         return YOLO(weight_file)
@@ -57,8 +62,19 @@ class YoloClient(Detector):
         """
         resp = []
 
+        if ("YOLO_DEVICE" in self.config and self.config["YOLO_DEVICE"]):
+            yolo_device = self.config["YOLO_DEVICE"]
+        else:
+            yolo_device = "cpu"
+
+        if ("YOLO_CONFIDENCE" in self.config and self.config["YOLO_CONFIDENCE"]):
+            yolo_confidence = float(self.config["YOLO_CONFIDENCE"])
+        else:
+            yolo_confidence = 0.25
+
+
         # Detect faces
-        results = self.model.predict(img, verbose=False, show=False, conf=0.25)[0]
+        results = self.model.predict(img, verbose=False, show=False, conf=yolo_confidence, device=yolo_device)[0]
 
         # For each face, extract the bounding box, the landmarks and confidence
         for result in results:
