@@ -22,7 +22,7 @@ WEIGHT_URL = "https://drive.google.com/uc?id=1qcr9DbgsX3ryrz2uU8w4Xm3cOrRywXqb"
 class YoloClient(Detector):
     def __init__(self):
         self.model = self.build_model()
-        self.config = dotenv_values(".env")
+        #self.config = dotenv_values(".env")
 
     def build_model(self) -> Any:
         """
@@ -51,6 +51,7 @@ class YoloClient(Detector):
         return YOLO(weight_file)
 
     def detect_faces(self, img: np.ndarray) -> List[FacialAreaRegion]:
+        config = dotenv_values(".env")
         """
         Detect and align face with yolo
 
@@ -62,13 +63,13 @@ class YoloClient(Detector):
         """
         resp = []
 
-        if ("YOLO_DEVICE" in self.config and self.config["YOLO_DEVICE"]):
-            yolo_device = self.config["YOLO_DEVICE"]
+        if ("YOLO_DEVICE" in config and config["YOLO_DEVICE"]):
+            yolo_device = config["YOLO_DEVICE"]
         else:
-            yolo_device = "cpu"
+            yolo_device = "cuda:0"
 
-        if ("YOLO_CONFIDENCE" in self.config and self.config["YOLO_CONFIDENCE"]):
-            yolo_confidence = float(self.config["YOLO_CONFIDENCE"])
+        if ("YOLO_CONFIDENCE" in config and config["YOLO_CONFIDENCE"]):
+            yolo_confidence = float(config["YOLO_CONFIDENCE"])
         else:
             yolo_confidence = 0.25
 
