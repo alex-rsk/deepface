@@ -74,7 +74,7 @@ class YoloClient(Detector):
 
 
         # Detect faces
-        results = self.model.predict(img, verbose=False, show=False, conf=yolo_confidence, device=yolo_device)[0]
+        results = self.model.predict(img, verbose=True, show=False, conf=yolo_confidence, device=yolo_device)[0]
 
         # For each face, extract the bounding box, the landmarks and confidence
         for result in results:
