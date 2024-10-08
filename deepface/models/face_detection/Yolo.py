@@ -25,6 +25,7 @@ class YoloClient(Detector):
         #self.config = dotenv_values(".env")
 
     def build_model(self) -> Any:
+        config = dotenv_values(".env")
         """
         Build a yolo detector model
         Returns:
@@ -40,8 +41,8 @@ class YoloClient(Detector):
                 "Please install using 'pip install ultralytics'"
             ) from e
 
-        if ("CUSTOM_YOLO_WEIGHTS" in self.config and self.config["YOLO_CUSTOM_WEIGHTS"]):
-            weight_file =  self.config["YOLO_CUSTOM_WEIGHTS"]
+        if ("CUSTOM_YOLO_WEIGHTS" in config and config["YOLO_CUSTOM_WEIGHTS"]):
+            weight_file =  config["YOLO_CUSTOM_WEIGHTS"]
         else:
             weight_file = weight_utils.download_weights_if_necessary(
                 file_name="yolov8n-face.pt", source_url=WEIGHT_URL
