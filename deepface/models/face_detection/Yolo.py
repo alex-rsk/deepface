@@ -68,6 +68,7 @@ class YoloClient(Detector):
             yolo_device = config["YOLO_DEVICE"]
         else:
             yolo_device = "cuda:0"
+        logger.debug(f"YOLO_DEVICE: {yolo_device}")
 
         if ("YOLO_CONFIDENCE" in config and config["YOLO_CONFIDENCE"]):
             yolo_confidence = float(config["YOLO_CONFIDENCE"])
